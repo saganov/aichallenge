@@ -4,18 +4,21 @@ require_once 'Ants.php';
 
 class MyBot
 {
-    private $directions = array('n','e','s','w');
+    private $ants;
 
-    private $orders = array();	
+    private $directions = array('n','e','s','w');
+    private $orders = array();
+    private $targets = array();
+
     // track all moves, prevent collisions
-    private function do_move_direction($ants, $loc, $direction)
+    private function do_move_direction($loc, $direction)
     {
 	list ($aRow, $aCol) = $loc;
-        $new_loc = $ants->destination($aRow, $aCol, $direction);
+        $new_loc = $this->ants->destination($aRow, $aCol, $direction);
 	list($nRow, $nCol) = $new_loc;
-        if ($ants->unoccupied($nRow, $nCol) && !isset($this->orders[$nRow][$nCol]))
+        if ($this->ants->unoccupied($nRow, $nCol) && !isset($this->orders[$nRow][$nCol]))
 	{
-            $ants->issueOrder($aRow, $aCol, $direction);
+	    $this->ants->issueOrder($aRow, $aCol, $direction);
             $this->orders[$nRow][$nCol] = $loc;
             return True;
 	}
@@ -29,12 +32,12 @@ class MyBot
 
     public function doTurn( $ants )
     {
-    	//$this->orders = array();
+    	$this->ants = $ants;
         foreach ( $ants->myAnts as $ant_loc )
 	{
             foreach ($this->directions as $direction)
 	    {
-                if ($this->do_move_direction($ants, $ant_loc, $direction))
+                if ($this->do_move_direction($ant_loc, $direction))
 		{
 		   break;
 		}
