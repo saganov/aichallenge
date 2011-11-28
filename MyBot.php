@@ -13,13 +13,11 @@ class MyBot
     // track all moves, prevent collisions
     private function do_move_direction($loc, $direction)
     {
-	list ($aRow, $aCol) = $loc;
-        $new_loc = $this->ants->destination($aRow, $aCol, $direction);
-	list($nRow, $nCol) = $new_loc;
-        if ($this->ants->unoccupied($nRow, $nCol) && !isset($this->orders[$nRow][$nCol]))
+        $new_loc = $this->ants->destination($loc, $direction);
+        if ($this->ants->unoccupied($new_loc) && !$this->inOrder($new_loc))
 	{
-	    $this->ants->issueOrder($aRow, $aCol, $direction);
-            $this->orders[$nRow][$nCol] = $loc;
+	    $this->ants->issueOrder($loc, $direction);
+            $this->addOrder($new_loc, $loc);
             return True;
 	}
         else
@@ -27,6 +25,18 @@ class MyBot
             return False;
 	}
 
+    }
+
+    private function inOrder($loc)
+    {
+    	list($row, $col) = $loc;
+    	return (isset($this->orders[$row][$col]));
+    }
+
+    private function addOrder($order, $loc)
+    {
+    	list($row, $col) = $order;
+	$this->orders[$row][$col] = $loc;
     }
 
 

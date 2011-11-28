@@ -49,8 +49,9 @@ class Ants
         );
 
 
-    public function issueOrder($aRow, $aCol, $direction)
+    public function issueOrder($loc, $direction)
     {
+    	list($aRow, $aCol) = $loc;
         printf("o %s %s %s\n", $aRow, $aCol, $direction);
         flush();
     }
@@ -152,17 +153,20 @@ class Ants
     }
 
 
-    public function passable($row, $col)
+    public function passable($loc)
     {
+    	list($row, $col) = $loc;
         return $this->map[$row][$col] > WATER;
     }
 
-    public function unoccupied($row, $col) {
+    public function unoccupied($loc) {
+    	list($row, $col) = $loc;
         return in_array($this->map[$row][$col], array(LAND, DEAD));
     }
 
-    public function destination($row, $col, $direction)
+    public function destination($loc, $direction)
     {
+    	list($row, $col) = $loc;
         list($dRow, $dCol) = $this->AIM[$direction];
         $nRow = ($row + $dRow) % $this->rows;
         $nCol = ($col +$dCol) % $this->cols;
@@ -171,8 +175,11 @@ class Ants
         return array( $nRow, $nCol );
     }
 
-    public function distance($row1, $col1, $row2, $col2) {
-        $dRow = abs($row1 - $row2);
+    public function distance($loc1, $loc2) {
+	list($row1, $col1) = $loc1;
+	list($row2, $col2) = $loc2;
+
+	$dRow = abs($row1 - $row2);
         $dCol = abs($col1 - $col2);
 
         $dRow = min($dRow, $this->rows - $dRow);
@@ -181,7 +188,10 @@ class Ants
         return sqrt($dRow * $dRow + $dCol * $dCol);
     }
 
-    public function direction($row1, $col1, $row2, $col2) {
+    public function direction($loc1, $loc2) {
+    	list($row1, $col1) = $loc1;
+	list($row2, $col2) = $loc2;
+
         $d = array();
         $row1 = $row1 % $this->rows;
         $row2 = $row2 % $this->rows;
