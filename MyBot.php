@@ -42,6 +42,7 @@ class MyBot
 
     public function doTurn( $ants )
     {
+    	$this->orders = array();
     	$this->ants = $ants;
         foreach ( $ants->myAnts as $ant_loc )
 	{
