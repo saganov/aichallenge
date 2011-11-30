@@ -62,17 +62,17 @@ class MyBot
     private function do_move_location($loc, $dest)
     {
     	$directions = $this->ants->direction($loc, $dest);
-	foreach($directions as $direction)
-	{
-	    if($this->do_move_direction($loc, $direction))
-	    {
-	    	$this->addLoc($this->targets, $dest, $loc);
-		return TRUE;
-	    }
-	}
-	return FALSE;
+        foreach($directions as $direction)
+        {
+            if($this->do_move_direction($loc, $direction))
+            {
+                $this->addLoc($this->targets, $dest, $loc);
+                return TRUE;
+            }
+        }
+        return FALSE;
     }
-    	
+    
 /*
         # find close food
         ant_dist = []
@@ -90,9 +90,7 @@ class MyBot
     {
     	$this->orders   = array();
     	$this->targets  = array();
-	$this->ants     = $ants;
-
-
+        $this->ants     = $ants;
 /*
 
     # prevent stepping on own hill
@@ -100,23 +98,32 @@ class MyBot
         orders[hill_loc] = None
 
 */
-	foreach($ants->myHills as $hill_loc)
-	{
-	    $this->addLoc($this->orders, $hill_loc, TRUE);
-	}
 
+        foreach($ants->myHills as $hill_loc)
+        {
+            $this->removeLoc($this->orders, $hill_loc);
+        }
 
-	$ant_dist = array();
-	foreach($ants->food as $food_loc)
-	{
-	    foreach($ants->myAnts as $ant_loc)
-	    {
-	    	$dist = $ants->distance($ant_loc, $food_loc);
-		$ant_dist[] = array($dist, $ant_loc, $food_loc);
-	    }
-	
-	}
-	asort($ant_dist);
+        $ant_dist = array();
+        foreach($ants->food as $food_loc)
+        {
+            foreach($ants->myAnts as $ant_loc)
+            {
+                $dist = $ants->distance($ant_loc, $food_loc);
+                $ant_dist[] = array($dist, $ant_loc, $food_loc);
+            }
+            
+        }
+        asort($ant_dist);
+
+        foreach($ant_dist as $a_dist)
+        {
+            list($dist, $ant_loc, $food_loc) = $a_dist;
+            if(!$this->isLoc($this->targets, $food_loc) && !$this->inLoc($this->targets, $ant_loc))
+            {
+                $this->do_move_location($ant_loc, $food_loc);
+            }
+        }
 
 /*
     # unblock own hill
@@ -127,29 +134,19 @@ class MyBot
                     break
 
 */
-	foreach($ants->myHills as $hill_loc)
-	{
-	    if($this->inLoc($ants->myAnts, $hill_loc) && !in_array($hill_loc, $this->orders))
-	    {
-	    	foreach(array('s', 'e', 'w', 'n') as $direction)
-		{
-		    if($this->do_move_direction($hill_loc, $direction))
-		    {
-		    	break;
-		    }
-		}
-	    }
-	}
-
-
-	foreach($ant_dist as $a_dist)
-	{
-	    list($dist, $ant_loc, $food_loc) = $a_dist;
-	    if(!$this->inLoc($this->targets, $food_loc) && !in_array($ant_loc, $this->targets))
-	    {
-	    	$this->do_move_location($ant_loc, $food_loc);
-	    }
-	}
+        foreach($ants->myHills as $hill_loc)
+        {
+            if($this->inLoc($ants->myAnts, $hill_loc) && !$this->isLoc($this->orders, $hill_loc))
+            {
+                foreach(array('s', 'e', 'w', 'n') as $direction)
+                {
+                    if($this->do_move_direction($hill_loc, $direction))
+                    {
+                        break;
+                    }
+                }
+            }
+        }
     }
     
 }
