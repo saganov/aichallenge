@@ -14,31 +14,40 @@ class MyBot
     private function do_move_direction($loc, $direction)
     {
         $new_loc = $this->ants->destination($loc, $direction);
-        if ($this->ants->unoccupied($new_loc) && !$this->inLoc($this->orders, $new_loc))
-	{
-	    $this->ants->issueOrder($loc, $direction);
+        if ($this->ants->unoccupied($new_loc) && !$this->isLoc($this->orders, $new_loc))
+        {
+            $this->ants->issueOrder($loc, $direction);
             $this->addLoc($this->orders, $new_loc, $loc);
             return True;
-	}
+        }
         else
-	{
+        {
             return False;
-	}
-
+        }
+    }
+    
+    private function isLoc($arr, $loc)
+    {
+    	list($row, $col) = $loc;
+    	return (isset($arr[$row .'-'. $col]));
     }
 
     private function inLoc($arr, $loc)
     {
-    	list($row, $col) = $loc;
-    	return (isset($arr[$row][$col]));
+    	return (in_array($loc ,$arr));
     }
 
     private function addLoc(&$arr, $order, $loc)
     {
     	list($row, $col) = $order;
-	$arr[$row][$col] = $loc;
+        $arr[$row .'-'. $col] = $loc;
     }
 
+    private function removeLoc(&$arr, $order)
+    {
+    	list($row, $col) = $order;
+        unset($arr[$row .'-'. $col]);
+    }
 
 /*
         def do_move_location(loc, dest):
