@@ -9,7 +9,26 @@ class MyBot
     private $directions = array('n','e','s','w');
     private $orders   = array();
     private $targets  = array();
+    private $unseen   = array();
 
+    public function doSetup($ants)
+    {
+        /*
+          self.unseen = []
+          for row in range(ants.rows):
+             for col in range(ants.cols):
+               self.unseen.append((row, col))
+         */
+        $this->unseen = array();
+        foreach($ants->rows as $row)
+        {
+            foreach($ants->cols as $col)
+            {
+                $this->unseen[] = array($row, $col);
+            }
+        }
+    }
+    
     // track all moves, prevent collisions
     private function do_move_direction($loc, $direction)
     {
@@ -124,6 +143,27 @@ class MyBot
                 $this->do_move_location($ant_loc, $food_loc);
             }
         }
+
+/*
+    # explore unseen areas
+    for loc in self.unseen[:]:
+        if ants.visible(loc):
+            self.unseen.remove(loc)
+    for ant_loc in ants.my_ants():
+        if ant_loc not in orders.values():
+            unseen_dist = []
+            for unseen_loc in self.unseen:
+                dist = ants.distance(ant_loc, unseen_loc)
+                unseen_dist.append((dist, unseen_loc))
+            unseen_dist.sort()
+            for dist, unseen_loc in unseen_dist:
+                if do_move_location(ant_loc, unseen_loc):
+                    break
+*/
+
+        // TODO:
+
+
 
 /*
     # unblock own hill
