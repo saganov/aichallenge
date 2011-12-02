@@ -20,9 +20,9 @@ class MyBot
                self.unseen.append((row, col))
          */
         $this->unseen = array();
-        foreach($ants->rows as $row)
+        for($row=0; $row<=$ants->rows; ++$row)
         {
-            foreach($ants->cols as $col)
+	    for($col=0; $col<=$ants->cols; ++$col)
             {
                 $this->unseen[] = array($row, $col);
             }
@@ -160,8 +160,38 @@ class MyBot
                 if do_move_location(ant_loc, unseen_loc):
                     break
 */
+	$unseen_tmp = $this->unseen;
+	foreach($unseen_tmp as $idx=>$loc)
+	{
+		if($ants->visible($loc))
+		{
+			unset($this->unseen[$idx]);
+		}
+	}
+	unset($unseen_tmp);
 
-        // TODO:
+	foreach($ants->myAnts as $ant_loc)
+	{
+		if(!$this->isLoc($this->orders, $ant_loc))
+		{
+			$unseen_dist = array();
+			foreach($this->unseen as $unseen_loc)
+			{
+				$dist = $ants->distance($ant_loc, $unseen_loc);
+				$unseen_dist[]=array($dist, $unseen_loc);
+			}
+			asort($unseen_dist);
+			foreach($unseen_dist as $elm)
+			{
+				list($dist, $unseen_loc) = $elm;
+				if($this->do_move_location($ant_loc, $unseen_loc))
+				{
+					break;
+				}
+			}
+		}
+	}
+    
 
 
 

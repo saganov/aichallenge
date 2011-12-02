@@ -25,6 +25,7 @@ class Ants
     public $enemyHills = array();
     public $deadAnts = array();
     public $food = array();
+    public $vision = NULL;
 
     public $AIM = array(
         'n' => array(-1, 0),
@@ -47,6 +48,8 @@ class Ants
         'e' => 'w',
         'w' => 'e'
         );
+
+    private $vision_ofsets_2 = array();
 
 
     public function issueOrder($loc, $direction)
@@ -85,6 +88,8 @@ class Ants
 
     public function update($data)
     {
+	$this->vision = NULL;
+
         // clear ant and food data
         foreach ( $this->myAnts as $ant ) {
             list($row,$col) = $ant;
@@ -232,6 +237,81 @@ class Ants
 
     }
 
+/*
+    def visible(self, loc):
+        ' determine which squares are visible to the given player '
+
+        if self.vision == None:
+            if not hasattr(self, 'vision_offsets_2'):
+                # precalculate squares around an ant to set as visible
+                self.vision_offsets_2 = []
+                mx = int(sqrt(self.viewradius2))
+                for d_row in range(-mx,mx+1):
+                    for d_col in range(-mx,mx+1):
+                        d = d_row**2 + d_col**2
+                        if d <= self.viewradius2:
+                            self.vision_offsets_2.append((
+                                # Create all negative offsets so vision will
+                                # wrap around the edges properly
+                                (d_row % self.rows) - self.rows,
+                                (d_col % self.cols) - self.cols
+                            ))
+            # set all spaces as not visible
+            # loop through ants and set all squares around ant as visible
+            self.vision = [[False]*self.cols for row in range(self.rows)]
+            for ant in self.my_ants():
+                a_row, a_col = ant
+                for v_row, v_col in self.vision_offsets_2:
+                    self.vision[a_row + v_row][a_col + v_col] = True
+        row, col = loc
+        return self.vision[row][col]
+
+*/
+    public function visible($loc)
+    {
+    	if(!isset($this->vision))
+	{
+	    if(empty($this->vision_offsets_2))
+	    {
+	        $this->vision_offsets_2 = array();
+		$mx = (int)sqrt($this->viewradius2);
+		foreach(range(-$mx, $mx+1) as $d_row)
+		{
+		    foreach(range(-$mx, $mx+1) as $d_col)
+		    {
+		        $d = $d_row^2 + $d_col^2;
+			if($d < $this->viewradius2)
+			{
+			    $this->vision_offsets_2[] = array(
+			    	($d_row % $this->rows) - $this->rows,
+			    	($d_col % $this->cols) - $this->cols
+			    );
+			}
+		    }
+		}
+	    }
+	    for($row=0; $row<=$this->rows; ++$row)
+	    {
+	    	for($col=0; $col<=$this->cols; ++$col)
+		{
+	    	    $this->vision[$row][$col] = FALSE;
+	
+		}
+	    }
+	    foreach($this->myAnts as $ant)
+	    {
+	    	list($a_row, $a_col) = $ant;
+		foreach($this->vision_ofsets_2 as $elm)
+		{
+		    list($v_row, $v_col) = $elm;
+		    $this->vision[$a_row+$v_row][$a_col+$v_col] = TRUE;
+		}
+	    }
+
+	}
+	list($row, $col) = $loc;
+	return $this->vision[$row][$col];
+    }
 
     public static function run($bot)
     {
@@ -256,4 +336,4 @@ class Ants
         }
 
     }
-    }
+}
