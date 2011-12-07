@@ -20,9 +20,9 @@ class MyBot
                self.unseen.append((row, col))
          */
         $this->unseen = array();
-        for($row=0; $row<=$ants->rows; ++$row)
+        for($row=0; $row<$ants->rows; $row++)
         {
-	    for($col=0; $col<=$ants->cols; ++$col)
+	    for($col=0; $col<$ants->cols; $col++)
             {
                 $this->unseen[] = array($row, $col);
             }
@@ -135,7 +135,7 @@ class MyBot
         }
         asort($ant_dist);
 
-        foreach($ant_dist as $a_dist)
+	foreach($ant_dist as $a_dist)
         {
             list($dist, $ant_loc, $food_loc) = $a_dist;
             if(!$this->isLoc($this->targets, $food_loc) && !$this->inLoc($this->targets, $ant_loc))
@@ -144,7 +144,8 @@ class MyBot
             }
         }
 
-/*
+
+ /*
     # explore unseen areas
     for loc in self.unseen[:]:
         if ants.visible(loc):
@@ -216,7 +217,9 @@ class MyBot
                     }
                 }
             }
-        }
+	}
+
+ 
     }
     
 }

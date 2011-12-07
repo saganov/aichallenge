@@ -279,7 +279,7 @@ class Ants
 		{
 		    foreach(range(-$mx, $mx+1) as $d_col)
 		    {
-		        $d = $d_row^2 + $d_col^2;
+		        $d = $d_row*$d_row + $d_col*$d_col;
 			if($d < $this->viewradius2)
 			{
 			    $this->vision_offsets_2[] = array(
@@ -290,9 +290,9 @@ class Ants
 		    }
 		}
 	    }
-	    for($row=0; $row<=$this->rows; ++$row)
+	    for($row=0; $row<$this->rows; ++$row)
 	    {
-	    	for($col=0; $col<=$this->cols; ++$col)
+	    	for($col=0; $col<$this->cols; ++$col)
 		{
 	    	    $this->vision[$row][$col] = FALSE;
 	
