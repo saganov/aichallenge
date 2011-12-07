@@ -198,7 +198,8 @@ class MyBot
 
 	foreach($ants->myAnts as $ant_loc)
 	{
-		if(!$this->isLoc($this->orders, $ant_loc))
+		// TODO: there was isLoc
+		if(!$this->inLoc($this->orders, $ant_loc))
 		{
 			$unseen_dist = array();
 			foreach($this->unseen as $unseen_loc)
@@ -231,7 +232,7 @@ class MyBot
 */
         foreach($ants->myHills as $hill_loc)
         {
-            if($this->inLoc($ants->myAnts, $hill_loc) && !$this->isLoc($this->orders, $hill_loc))
+            if($this->inLoc($ants->myAnts, $hill_loc) && !$this->inLoc($this->orders, $hill_loc))
             {
                 foreach(array('s', 'e', 'w', 'n') as $direction)
                 {
