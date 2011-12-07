@@ -37,6 +37,9 @@ class MyBot
         {
             $this->ants->issueOrder($loc, $direction);
             $this->addLoc($this->orders, $new_loc, $loc);
+	    list($nx,$ny) = $new_loc;
+	    list($ox,$oy) = $loc;
+	    $this->ants->debug('[do_move_direction: issueOrder: store order: from (%s : %s) to (%s : %s)]', array($ox, $oy, $nx, $ny));
             return True;
         }
         else
@@ -83,8 +86,11 @@ class MyBot
     	$directions = $this->ants->direction($loc, $dest);
         foreach($directions as $direction)
         {
+	    
             if($this->do_move_direction($loc, $direction))
             {
+		list($x,$y) = $loc;
+		$this->ants->debug('do_move_location: (%s : %s) -> %s', array($x, $y, $direction));
                 $this->addLoc($this->targets, $dest, $loc);
                 return TRUE;
             }
@@ -141,6 +147,9 @@ class MyBot
             if(!$this->isLoc($this->targets, $food_loc) && !$this->inLoc($this->targets, $ant_loc))
             {
                 $this->do_move_location($ant_loc, $food_loc);
+		list($x,$y) = $ant_loc;
+		list($fx,$fy) = $food_loc;
+		$this->ants->debug('find close food: (%s : %s) -> (%s : %s)', array($x, $y, $fx, $fy));
             }
         }
 
@@ -213,6 +222,8 @@ class MyBot
                 {
                     if($this->do_move_direction($hill_loc, $direction))
                     {
+			list($x,$y) = $hill_loc;
+			$this->ants->debug('unblock own hills: (%s : %s) -> %s', array($x, $y, $direction));
                         break;
                     }
                 }

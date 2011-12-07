@@ -59,6 +59,11 @@ class Ants
         flush();
     }
 
+    public function debug($format, array $args = array())
+    {
+	file_put_contents('game_logs/debug.log', vsprintf($format, $args) ."\n", FILE_APPEND);
+    }
+
     public function finishTurn()
     {
         echo("go\n");
