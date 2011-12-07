@@ -128,7 +128,8 @@ class MyBot
 */
         foreach($ants->myHills as $hill_loc)
         {
-            $this->removeLoc($this->orders, $hill_loc);
+            //$this->removeLoc($this->orders, $hill_loc);
+	    $this->addLoc($this->orders, $hill_loc, NULL);
         }
 
 /*
