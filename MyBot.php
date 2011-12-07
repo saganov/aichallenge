@@ -28,8 +28,20 @@ class MyBot
             }
         }
     }
-    
-    // track all moves, prevent collisions
+
+/*
+        # track all moves, prevent collisions
+        orders = {}
+        def do_move_direction(loc, direction):
+            new_loc = ants.destination(loc, direction)
+            if (ants.unoccupied(new_loc) and new_loc not in orders):
+                ants.issue_order((loc, direction))
+                orders[new_loc] = loc
+                return True
+            else:
+                return False
+
+*/
     private function do_move_direction($loc, $direction)
     {
         $new_loc = $this->ants->destination($loc, $direction);
@@ -98,19 +110,6 @@ class MyBot
         return FALSE;
     }
     
-/*
-        # find close food
-        ant_dist = []
-        for food_loc in ants.food():
-            for ant_loc in ants.my_ants():
-                dist = ants.distance(ant_loc, food_loc)
-                ant_dist.append((dist, ant_loc, food_loc))
-        ant_dist.sort()
-        for dist, ant_loc, food_loc in ant_dist:
-            if food_loc not in targets and ant_loc not in targets.values():
-                do_move_location(ant_loc, food_loc)
-
-*/
     public function doTurn( $ants )
     {
     	$this->orders   = array();
@@ -129,6 +128,19 @@ class MyBot
             $this->removeLoc($this->orders, $hill_loc);
         }
 
+/*
+        # find close food
+        ant_dist = []
+        for food_loc in ants.food():
+            for ant_loc in ants.my_ants():
+                dist = ants.distance(ant_loc, food_loc)
+                ant_dist.append((dist, ant_loc, food_loc))
+        ant_dist.sort()
+        for dist, ant_loc, food_loc in ant_dist:
+            if food_loc not in targets and ant_loc not in targets.values():
+                do_move_location(ant_loc, food_loc)
+
+*/
         $ant_dist = array();
         foreach($ants->food as $food_loc)
         {
