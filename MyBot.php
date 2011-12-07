@@ -81,6 +81,10 @@ class MyBot
     {
     	list($row, $col) = $order;
         unset($arr[$row .'-'. $col]);
+	/*
+	$idx = array_search($order, $arr);
+	unset($arr[$idx]);
+	*/
     }
 
 /*
@@ -122,7 +126,6 @@ class MyBot
         orders[hill_loc] = None
 
 */
-
         foreach($ants->myHills as $hill_loc)
         {
             $this->removeLoc($this->orders, $hill_loc);
@@ -213,7 +216,6 @@ class MyBot
 			}
 		}
 	}
-    
 
 
 
@@ -241,7 +243,6 @@ class MyBot
                 }
             }
 	}
-
  
     }
     
