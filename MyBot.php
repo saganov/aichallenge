@@ -10,9 +10,11 @@ class MyBot
     private $orders   = array();
     private $targets  = array();
     private $unseen   = array();
+    private $hills    = array();
 
     public function doSetup($ants)
     {
+    	$this->hills = array();
         /*
           self.unseen = []
           for row in range(ants.rows):
@@ -49,9 +51,10 @@ class MyBot
         {
             $this->ants->issueOrder($loc, $direction);
             $this->addLoc($this->orders, $new_loc, $loc);
+	    //$this->addLoc($this->orders, $loc, $new_loc);
 	    list($nx,$ny) = $new_loc;
 	    list($ox,$oy) = $loc;
-	    $this->ants->debug('[do_move_direction: issueOrder: store order: from (%s : %s) to (%s : %s)]', array($ox, $oy, $nx, $ny));
+	    $this->ants->debug('[do_move_direction: issueOrder: store order: [%s-%s] = (%s , %s)]', array($nx, $ny, $ox, $oy));
             return True;
         }
         else
@@ -102,7 +105,6 @@ class MyBot
     	$directions = $this->ants->direction($loc, $dest);
         foreach($directions as $direction)
         {
-	    
             if($this->do_move_direction($loc, $direction))
             {
 		list($x,$y) = $loc;
@@ -126,11 +128,16 @@ class MyBot
         orders[hill_loc] = None
 
 */
+
         foreach($ants->myHills as $hill_loc)
         {
             //$this->removeLoc($this->orders, $hill_loc);
-	    $this->addLoc($this->orders, $hill_loc, NULL);
+	    $this->addLoc($this->orders, $hill_loc, TRUE);
+	    list($x, $y) = $hill_loc;
+	    $this->ants->debug('prevent stepping on my hill: add to order: [%s-%s] = true', array($x, $y));
         }
+
+
 
 /*
         # find close food
@@ -157,9 +164,9 @@ class MyBot
         }
         asort($ant_dist);
 
-	foreach($ant_dist as $a_dist)
+	foreach($ant_dist as $elm)
         {
-            list($dist, $ant_loc, $food_loc) = $a_dist;
+            list($dist, $ant_loc, $food_loc) = $elm;
             if(!$this->isLoc($this->targets, $food_loc) && !$this->inLoc($this->targets, $ant_loc))
             {
                 $this->do_move_location($ant_loc, $food_loc);
@@ -169,6 +176,51 @@ class MyBot
             }
         }
 
+
+/*
+        # attack hills
+        for hill_loc, hill_owner in ants.enemy_hills():
+            if hill_loc not in self.hills:
+                self.hills.append(hill_loc)        
+        ant_dist = []
+        for hill_loc in self.hills:
+            for ant_loc in ants.my_ants():
+                if ant_loc not in orders.values():
+                    dist = ants.distance(ant_loc, hill_loc)
+                    ant_dist.append((dist, ant_loc, hill_loc))
+        ant_dist.sort()
+        for dist, ant_loc, hill_loc in ant_dist:
+            do_move_location(ant_loc, hill_loc)
+
+*/
+/*
+	foreach($ants->enemyHills as $elm)
+	{
+	    list($hill_loc, $hill_owner) = $elm;
+	    if(!$this->inLoc($this->hills, $hill_loc))
+	    {
+	        $this->hills[] = $hill_loc;
+	    }
+	}
+	$ant_dist = array();
+	foreach($this->hills as $hill_loc)
+	{
+	    foreach($ants->myAnts as $ant_loc)
+	    {
+	        if(!$this->inLoc($this->orders, $ant_loc))
+		{
+		    $dist = $ants->distance($ant_loc, $hill_loc);
+		    $ant_dist[] = array($dist, $ant_loc, $hill_loc);
+		}
+	    }
+	}
+	asort($ant_dist);
+	foreach($ant_dist as $elm)
+	{
+	    list($dist, $ant_loc, $hill_loc) = $elm;
+	    $this->do_move_location($ant_loc, $hill_loc);
+	}
+*/
 
  /*
     # explore unseen areas
@@ -186,6 +238,7 @@ class MyBot
                 if do_move_location(ant_loc, unseen_loc):
                     break
 */
+/*
 	$unseen_tmp = $this->unseen;
 	foreach($unseen_tmp as $idx=>$loc)
 	{
@@ -199,7 +252,7 @@ class MyBot
 	foreach($ants->myAnts as $ant_loc)
 	{
 		// TODO: there was isLoc
-		if(!$this->inLoc($this->orders, $ant_loc))
+		if(!$this->isLoc($this->orders, $ant_loc))
 		{
 			$unseen_dist = array();
 			foreach($this->unseen as $unseen_loc)
@@ -218,7 +271,7 @@ class MyBot
 			}
 		}
 	}
-
+*/
 
 
 /*
@@ -236,16 +289,41 @@ class MyBot
             {
                 foreach(array('s', 'e', 'w', 'n') as $direction)
                 {
+                    list($x,$y) = $hill_loc;
+		    $this->ants->debug('try to unblock own hills: (%s : %s) -> %s', array($x, $y, $direction));
+
                     if($this->do_move_direction($hill_loc, $direction))
                     {
 			list($x,$y) = $hill_loc;
 			$this->ants->debug('unblock own hills: (%s : %s) -> %s', array($x, $y, $direction));
                         break;
-                    }
+                   }
                 }
             }
 	}
- 
+	
+
+/*
+        # default move
+        for ant_loc in ants.my_ants():
+            directions = ('n','e','s','w')
+            for direction in directions:
+                if do_move_direction(ant_loc, direction):
+                    break
+
+*/
+/*
+	foreach($ants->myAnts as $ant_loc)
+	{
+	    foreach(array('n', 'e', 's', 'w') as $direction)
+	    {
+	        if($this->do_move_direction($ant_loc, $direction))
+		{
+		    break;
+		}
+	    }
+	}
+*/
     }
     
 }

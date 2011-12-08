@@ -50,7 +50,7 @@ class Ants
         );
 
     private $vision_ofsets_2 = array();
-
+    public static $turn = 0;	
 
     public function issueOrder($loc, $direction)
     {
@@ -61,7 +61,7 @@ class Ants
 
     public function debug($format, array $args = array())
     {
-	file_put_contents('game_logs/debug.log', vsprintf($format, $args) ."\n", FILE_APPEND);
+	file_put_contents('game_logs/debug.log', self::$turn .' :: '. vsprintf($format, $args) ."\n", FILE_APPEND);
     }
 
     public function finishTurn()
@@ -331,6 +331,7 @@ class Ants
                 $ants->finishTurn();
                 $map_data = array();
             } elseif ($current_line === 'go') {
+	    	self::$turn++;
                 $ants->update($map_data);
                 $bot->doTurn($ants);
                 $ants->finishTurn();
