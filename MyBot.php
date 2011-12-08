@@ -128,11 +128,10 @@ class MyBot
         orders[hill_loc] = None
 
 */
-
         foreach($ants->myHills as $hill_loc)
         {
             //$this->removeLoc($this->orders, $hill_loc);
-	    $this->addLoc($this->orders, $hill_loc, TRUE);
+	    $this->addLoc($this->orders, $hill_loc, FALSE);
 	    list($x, $y) = $hill_loc;
 	    $this->ants->debug('prevent stepping on my hill: add to order: [%s-%s] = true', array($x, $y));
         }
@@ -193,10 +192,8 @@ class MyBot
             do_move_location(ant_loc, hill_loc)
 
 */
-/*
-	foreach($ants->enemyHills as $elm)
+	foreach($ants->enemyHills as $hill_loc)
 	{
-	    list($hill_loc, $hill_owner) = $elm;
 	    if(!$this->inLoc($this->hills, $hill_loc))
 	    {
 	        $this->hills[] = $hill_loc;
@@ -252,18 +249,18 @@ class MyBot
 	foreach($ants->myAnts as $ant_loc)
 	{
 		// TODO: there was isLoc
-		if(!$this->isLoc($this->orders, $ant_loc))
+		if(!$this->inLoc($this->orders, $ant_loc))
 		{
 			$unseen_dist = array();
 			foreach($this->unseen as $unseen_loc)
 			{
 				$dist = $ants->distance($ant_loc, $unseen_loc);
-				$unseen_dist[]=array($dist, $unseen_loc);
+				$unseen_dist[]=array($dist, $unseen_loc, $ant_loc);
 			}
 			asort($unseen_dist);
 			foreach($unseen_dist as $elm)
 			{
-				list($dist, $unseen_loc) = $elm;
+				list($dist, $unseen_loc, $ant_loc) = $elm;
 				if($this->do_move_location($ant_loc, $unseen_loc))
 				{
 					break;
