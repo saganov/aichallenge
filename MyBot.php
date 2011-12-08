@@ -107,8 +107,8 @@ class MyBot
         {
             if($this->do_move_direction($loc, $direction))
             {
-		list($x,$y) = $loc;
-		$this->ants->debug('do_move_location: (%s : %s) -> %s', array($x, $y, $direction));
+		//list($x,$y) = $loc;
+		//$this->ants->debug('do_move_location: (%s : %s) -> %s', array($x, $y, $direction));
                 $this->addLoc($this->targets, $dest, $loc);
                 return TRUE;
             }
@@ -216,8 +216,11 @@ class MyBot
 	{
 	    list($dist, $ant_loc, $hill_loc) = $elm;
 	    $this->do_move_location($ant_loc, $hill_loc);
+	    list($ax, $ay) = $ant_loc;
+	    list($hx, $hy) = $hill_loc;
+	    $ants->debug('attack hills: ant (%s, %s) to hill (%s, %s)', array($ax, $ay, $hx, $hy));
 	}
-*/
+
 
  /*
     # explore unseen areas
@@ -235,7 +238,6 @@ class MyBot
                 if do_move_location(ant_loc, unseen_loc):
                     break
 */
-/*
 	$unseen_tmp = $this->unseen;
 	foreach($unseen_tmp as $idx=>$loc)
 	{
@@ -263,12 +265,15 @@ class MyBot
 				list($dist, $unseen_loc, $ant_loc) = $elm;
 				if($this->do_move_location($ant_loc, $unseen_loc))
 				{
+				    list($ax, $ay) = $ant_loc;
+				    list($ux, $uy) = $unseen_loc;
+				    $ants->debug('explore unseen areas: ant (%s, %s) to area (%s, %s)', array($ax, $ay, $ux, $uy));
 					break;
 				}
 			}
 		}
 	}
-*/
+
 
 
 /*
