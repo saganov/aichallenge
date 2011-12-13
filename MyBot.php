@@ -115,30 +115,8 @@ class MyBot
         }
         return FALSE;
     }
-    
-    public function doTurn( $ants )
-    {
-    	$this->orders   = array();
-    	$this->targets  = array();
-        $this->ants     = $ants;
-/*
-
-    # prevent stepping on own hill
-    for hill_loc in ants.my_hills():
-        orders[hill_loc] = None
-
-*/
-        foreach($ants->myHills as $hill_loc)
-        {
-            //$this->removeLoc($this->orders, $hill_loc);
-	    $this->addLoc($this->orders, $hill_loc, FALSE);
-	    list($x, $y) = $hill_loc;
-	    $this->ants->debug('prevent stepping on my hill: add to order: [%s-%s] = true', array($x, $y));
-        }
-
-
-
-/*
+   
+ /*
         # find close food
         ant_dist = []
         for food_loc in ants.food():
@@ -151,6 +129,8 @@ class MyBot
                 do_move_location(ant_loc, food_loc)
 
 */
+    private function find_food($ants)
+    {
         $ant_dist = array();
         foreach($ants->food as $food_loc)
         {
@@ -171,10 +151,10 @@ class MyBot
                 $this->do_move_location($ant_loc, $food_loc);
 		list($x,$y) = $ant_loc;
 		list($fx,$fy) = $food_loc;
-		$this->ants->debug('find close food: (%s : %s) -> (%s : %s)', array($x, $y, $fx, $fy));
+		$ants->debug('find close food: (%s : %s) -> (%s : %s)', array($x, $y, $fx, $fy));
             }
         }
-
+    }
 
 /*
         # attack hills
@@ -192,6 +172,8 @@ class MyBot
             do_move_location(ant_loc, hill_loc)
 
 */
+    private function attack_hills($ants)
+    {
 	foreach($ants->enemyHills as $hill_loc)
 	{
 	    if(!$this->inLoc($this->hills, $hill_loc))
@@ -220,9 +202,9 @@ class MyBot
 	    list($hx, $hy) = $hill_loc;
 	    $ants->debug('attack hills: ant (%s, %s) to hill (%s, %s)', array($ax, $ay, $hx, $hy));
 	}
+    }
 
-
- /*
+/*
     # explore unseen areas
     for loc in self.unseen[:]:
         if ants.visible(loc):
@@ -238,6 +220,8 @@ class MyBot
                 if do_move_location(ant_loc, unseen_loc):
                     break
 */
+    private function explore_unseen($ants)
+    {
 	$unseen_tmp = $this->unseen;
 	foreach($unseen_tmp as $idx=>$loc)
 	{
@@ -273,8 +257,7 @@ class MyBot
 			}
 		}
 	}
-
-
+    }
 
 /*
     # unblock own hill
@@ -285,6 +268,8 @@ class MyBot
                     break
 
 */
+    private function unblock_own_hills($ants)
+    {
         foreach($ants->myHills as $hill_loc)
         {
             if($this->inLoc($ants->myAnts, $hill_loc) && !$this->inLoc($this->orders, $hill_loc))
@@ -303,7 +288,36 @@ class MyBot
                 }
             }
 	}
-	
+    }	
+
+
+    public function doTurn( $ants )
+    {
+    	$this->orders   = array();
+    	$this->targets  = array();
+        $this->ants     = $ants;
+/*
+
+    # prevent stepping on own hill
+    for hill_loc in ants.my_hills():
+        orders[hill_loc] = None
+
+*/
+        foreach($ants->myHills as $hill_loc)
+        {
+            //$this->removeLoc($this->orders, $hill_loc);
+	    $this->addLoc($this->orders, $hill_loc, FALSE);
+	    list($x, $y) = $hill_loc;
+	    $this->ants->debug('prevent stepping on my hill: add to order: [%s-%s] = true', array($x, $y));
+        }
+
+	$this->find_food($ants);
+
+	$this->attack_hills($ants);
+
+	$this->explore_unseen($ants);
+ 
+	$this->unblock_own_hills($ants);
 
 /*
         # default move
